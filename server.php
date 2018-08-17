@@ -78,8 +78,6 @@
 
 	}
 
-	// ... 
-
 	// LOGIN USER
 	if (isset($_POST['login_user'])) {
 		$email = mysqli_real_escape_string($db, $_POST['email']);
@@ -110,5 +108,60 @@
 
 		}
 	}
+/*	<?php echo $_SERVER['PHP_SELF']; ?>*/
+
+
+if (isset($_POST['searchBuses'])) {
+	$journeyFrom = $_POST['journeyFrom'];
+	$journeyTo = $_POST['journeyTo'];
+	$dateOfJourney = $_POST['dateOfJourney'];
+
+	if (empty($journeyFrom)) { 
+		$error = true;
+		array_push($errors, "journeyFrom is required"); 
+	}
+	if (empty($journeyTo)) { 
+		$error = true;
+		array_push($errors, "journeyTo is required"); 
+	}
+	if (empty($dateOfJourney)) { 
+		$error = true;
+		array_push($errors, "dateOfJourney is required"); 
+	}
+
+	if(!$error){
+		$_SESSION['journeyFrom'] = $journeyFrom;
+		$_SESSION['journeyTo'] = $journeyTo; 
+		$_SESSION['dateOfJourney'] = $dateOfJourney; 
+		
+		$route_sql = "select * from `route_detail`";
+		$route_run = mysqli_query($db,$route_sql);
+	
+		if(!$route_run)
+			die("Unable to run query".mysqli_error());
+	
+		$no_rows = mysqli_num_rows($route_run);
+		if($no_rows>0){
+			while($data = mysqli_fetch_assoc($route_run)){
+	
+				$departure_station = $data['departure_station'];
+				$arrival_station = $data['arrival_station'];
+	
+				$journeyFrom = $_SESSION['journeyFrom'];
+				$journeyTo = $_SESSION['journeyTo']; 
+				$dateOfJourney = $_SESSION['dateOfJourney'];
+	
+				if(($journeyFrom == $departure_station) && ($journeyTo == $arrival_station)){
+					$route_id = $data['route_id'];
+					$_SESSION['selected_route_id'] = $route_id;
+				}
+			}
+		}
+		header("location: availablebus.php");
+	}
+
+
+}
+
 
 ?>

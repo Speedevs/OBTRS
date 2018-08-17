@@ -25,7 +25,7 @@ body {
     background: -o-linear-gradient(top, #f2f6f8 0%, #b5c6d0 0%, #d8e1e7 62%, #e0eff9 100%);
     background: -ms-linear-gradient(top, #f2f6f8 0%, #b5c6d0 0%, #d8e1e7 62%, #e0eff9 100%);
     background: linear-gradient(to bottom, #f2f6f8 0%, #b5c6d0 0%, #d8e1e7 62%, #e0eff9 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2f6f8', endColorstr='#e0eff9', GradientType=0);
+    filter: progid: DXImageTransform.Microsoft.gradient( startColorstr='#f2f6f8', endColorstr='#e0eff9', GradientType=0);
 }
 
 #topbg {
@@ -56,7 +56,7 @@ body {
     background: -o-linear-gradient(top, #1e5799 0%, #2989d8 49%, #207cca 100%, #7db9e8 100%);
     background: -ms-linear-gradient(top, #1e5799 0%, #2989d8 49%, #207cca 100%, #7db9e8 100%);
     background: linear-gradient(to bottom, #1e5799 0%, #2989d8 49%, #207cca 100%, #7db9e8 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1e5799', endColorstr='#7db9e8', GradientType=0);
+    filter: progid: DXImageTransform.Microsoft.gradient( startColorstr='#1e5799', endColorstr='#7db9e8', GradientType=0);
 }
 
 #mainmenu ul {
@@ -217,8 +217,6 @@ table.display {
     border-collapse: collapse;
 }
 
-
-
 .ui-state-default,
 .ui-widget-content .ui-state-default,
 .ui-widget-header .ui-state-default {
@@ -234,7 +232,6 @@ table.display thead th {
     font-weight: bold;
     cursor: pointer;
 }
-
 
 table.display thead th {
     padding: 3px 0px 3px 10px;
@@ -314,3 +311,21 @@ input[type=password] {
     font-size: 15px;
 }
 
+#place input[type="checkbox"] {
+    height: 36px;
+    width: 38px;
+    position: absolute;
+    top: -3px;
+    left: 0px;
+    opacity: 0.8;
+    margin: 5px 10px;
+    transform: scale(1.5);
+    transform-origin: center;
+    cursor: pointer;
+}
+
+.seat a {
+    position: absolute;
+    bottom: 5px;
+    left: 3px;
+}

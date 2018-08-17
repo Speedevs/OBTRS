@@ -1,3 +1,38 @@
+<?php
+    include 'dbconnect.php';
+    include 'server.php';
+
+
+	if (!isset($_SESSION['cust_id']))
+    {
+        header("location: ../index.php");
+    }
+    else{ //Continue to current page
+        header( 'Content-Type: text/html; charset=utf-8' );
+    }
+
+    $dateOfJourney = $_SESSION['dateOfJourney'];
+    $selected_route_id = $_SESSION['selected_route_id'];
+
+    $query = "SELECT * FROM `book_detail`, `bus_detail` WHERE `journey_date` like '$dateOfJourney' AND `route_id`='$selected_route_id'";
+    $result = mysqli_query($db,$query) or die('Error: '.mysql_error ());
+    $no_of_rows = mysqli_num_rows($result);
+    if($no_of_rows>0){
+        while($row = mysqli_fetch_assoc($result)) {
+            $choice = $row['choice'];
+            echo "Seat Choice " .$choice."<br>";
+            $explode_choice = explode(',', $row['choice']);
+            $ccount = count($explode_choice);
+            echo $ccount." Seat Occupied. <br>";
+
+            $total_seat = $row['total_seat'];
+            echo "total seat: " .$total_seat."<br>";
+        }
+    }
+
+
+?>
+
 <!DOCTYPE html>
 <html dir="">
 
@@ -21,10 +56,11 @@
             <div id="mainmenu">
                 <header>
                     <ul>
-                        <li><a href="http://localhost/SLTB/index">Home</a></li>
-                        <li><a href="http://localhost/SLTB/login">Login</a></li>
-
-
+                        <li><a href="index.php">Home</a></li>
+                        <li><a href="login.php">Login</a></li>
+                        <?php  if (isset($_SESSION['cust_name'])) {?>
+                            <li> <a href="index.php?logout='1'">Logout</a> </li>
+                        <?php }?>
                     </ul>
                 </header>
             </div>
@@ -34,79 +70,151 @@
         <div></div>
 
         <div id="content">
-
-
-            <div>
-                <div id="bodyhead">
-                    <h1>Available Buses</h1>
-                </div>
-                <form action="http://localhost/SLTB/booker/booking/" method="post" class="has-validation-callback">
-                    <div class="busdataarea">
-                        <label><b>Booking Date :</b></label><label>2018-05-20</label>
-                    </div>
-                    <div id="tSize">
-                        <div class="demo_jui">
-                            <input type="hidden" name="book_date" id="book_date" value="2018-05-20">
-                            <input type="hidden" name="book_journeyFrom" id="book_journeyFrom" value="Colombo">
-                            <input type="hidden" name="book_journeyTo" id="book_journeyTo" value="Jaffna">
-                            <input type="hidden" name="book_busNo" id="book_busNo" value="">
-                            <input type="hidden" name="book_numberOfSeat" id="book_numberOfSeat" value="">
-                            <input type="hidden" name="book_price" id="book_price" value="">
-                            <div id="exampleBooker_wrapper" class="dataTables_wrapper" role="grid">
-                                <div class="fg-toolbar ui-toolbar ui-widget-header ui-corner-tl ui-corner-tr ui-helper-clearfix"></div>
-                                <table cellpadding="0" cellspacing="0" border="0" class="display dataTable" id="exampleBooker">
-                                    <thead>
-                                        <tr role="row">
-                                            <th class="ui-state-default" role="columnheader" tabindex="0" aria-controls="exampleBooker" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Bus No: activate to sort column descending" style="width: 86px;">
-                                                <div class="DataTables_sort_wrapper">Bus No<span class="DataTables_sort_icon css_right ui-icon ui-icon-triangle-1-n"></span></div>
-                                            </th>
-                                            <th class="ui-state-default" role="columnheader" tabindex="0" aria-controls="exampleBooker" rowspan="1" colspan="1" aria-label="No. of Seat: activate to sort column ascending" style="width: 116px;">
-                                                <div class="DataTables_sort_wrapper">No. of Seat<span class="DataTables_sort_icon css_right ui-icon ui-icon-carat-2-n-s"></span></div>
-                                            </th>
-                                            <th class="ui-state-default" role="columnheader" tabindex="0" aria-controls="exampleBooker" rowspan="1" colspan="1" aria-label="Route No: activate to sort column ascending" style="width: 104px;">
-                                                <div class="DataTables_sort_wrapper">Route No<span class="DataTables_sort_icon css_right ui-icon ui-icon-carat-2-n-s"></span></div>
-                                            </th>
-                                            <th class="ui-state-default" role="columnheader" tabindex="0" aria-controls="exampleBooker" rowspan="1" colspan="1" aria-label="Dep. Time: activate to sort column ascending" style="width: 111px;">
-                                                <div class="DataTables_sort_wrapper">Dep. Time<span class="DataTables_sort_icon css_right ui-icon ui-icon-carat-2-n-s"></span></div>
-                                            </th>
-                                            <th class="ui-state-default" role="columnheader" tabindex="0" aria-controls="exampleBooker" rowspan="1" colspan="1" aria-label="Arr. Time: activate to sort column ascending" style="width: 108px;">
-                                                <div class="DataTables_sort_wrapper">Arr. Time<span class="DataTables_sort_icon css_right ui-icon ui-icon-carat-2-n-s"></span></div>
-                                            </th>
-                                            <th class="ui-state-default" role="columnheader" tabindex="0" aria-controls="exampleBooker" rowspan="1" colspan="1" aria-label="Entry Point: activate to sort column ascending" style="width: 130px;">
-                                                <div class="DataTables_sort_wrapper">Entry Point<span class="DataTables_sort_icon css_right ui-icon ui-icon-carat-2-n-s"></span></div>
-                                            </th>
-                                            <th class="ui-state-default" role="columnheader" tabindex="0" aria-controls="exampleBooker" rowspan="1" colspan="1" aria-label="Price: activate to sort column ascending" style="width: 69px;">
-                                                <div class="DataTables_sort_wrapper">Price<span class="DataTables_sort_icon css_right ui-icon ui-icon-carat-2-n-s"></span></div>
-                                            </th>
-                                            <th class="ui-state-default" role="columnheader" tabindex="0" aria-controls="exampleBooker" rowspan="1" colspan="1" aria-label=": activate to sort column ascending" style="width: 99px;">
-                                                <div class="DataTables_sort_wrapper"><span class="DataTables_sort_icon css_right ui-icon ui-icon-carat-2-n-s"></span></div>
-                                            </th>
-                                        </tr>
-                                    </thead>
-
-
-                                    <tbody role="alert" aria-live="polite" aria-relevant="all">
-                                        <tr class="busData odd">
-                                            <td class="  sorting_1">NB6079</td>
-                                            <td class=" ">49</td>
-                                            <td class=" ">57</td>
-                                            <td class=" ">20:00:00</td>
-                                            <td class=" ">03:45:00</td>
-                                            <td class=" "><select><option>Entry Point</option><option>Anuradhapu</option><option>Colombo</option><option>Kurunagala</option></select></td>
-                                            <td class=" ">1300</td>
-                                            <td class=" "><input type="submit" name="bookNow" value="Book Now"></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <div class="fg-toolbar ui-toolbar ui-widget-header ui-corner-bl ui-corner-br ui-helper-clearfix"></div>
-                            </div>
-                        </div>
-                        <div class="spacer"></div>
-                    </div>
-                </form>
+            <div id="bodyhead">
+                <h1>Available Buses</h1>
             </div>
+            <form action="booking.php" method="post">
+                <div class="busdataarea">
+                    <label><b>Booking Date :</b></label>
+                    <label>
+                        <?php 
+                            echo ($dateOfJourney = $_SESSION['dateOfJourney']);
+                            // $time = strtotime($_POST['dateFrom']);
+                            // if ($time) {
+                            // $new_date = date('Y-m-d', $time);
+                            // echo $new_date;
+                            // } else {
+                            // echo 'Invalid Date: ' . $_POST['dateFrom'];
+                            // // fix it.
+                            // }
+                        ?> 
+                    </label>
+                </div>
+                <div class="row" style="margin: 25px 0;">
+                    <table border="0" cellpadding="0" cellspacing="20" style="margin: 5px 0;">
+
+                        <thead style="text-align: left;">
+                            <tr>
+                                <th>From</th>
+                                <th>To</th>
+                                <th>Via Station</th>
+                                <th>Departure Time</th>
+                                <th>Arrival Time</th>
+                                <th>Fare</th>
+                                <th>Available</th>
+                            </tr>
+                        </thead>
+
+                    <?php
+
+                        $sql = "select * from `time_table`";
+                        $run = mysqli_query($db,$sql);
+
+                        if(!$run)
+                            die("Unable to run query".mysqli_error());
+
+                        $rows = mysqli_num_rows($run);
+                        if($rows>0){
+                            while($data = mysqli_fetch_assoc($run)){
+
+                                $departure_station = $data['departure_station'];
+                                $arrival_station = $data['arrival_station'];
+
+                                $journeyFrom = $_SESSION['journeyFrom'];
+                                $journeyTo = $_SESSION['journeyTo']; 
+                                $dateOfJourney = $_SESSION['dateOfJourney'];
+
+                                if(($journeyFrom == $departure_station) && ($journeyTo == $arrival_station)){
+                                    echo "<td>".$data['departure_station']."</td>";
+                                    echo "<td>".$data['arrival_station']."</td>";
+                                    echo "<td>".$data['via_station']."</td>";
+                                    echo "<td>".date('h:i A', strtotime($data['departure_time']))."</td>";
+                                    echo "<td>".date('h:i A', strtotime($data['arrival_time']))."</td>";
+                                    echo "<td>".$data['rent']."</td>";
+                                        $query2 = "SELECT
+                                            `journey_date`,
+                                            COUNT(*) AS COUNT
+                                            FROM
+                                                book_detail
+                                            WHERE
+                                                `journey_date` = '$dateOfJourney' 
+                                            AND `route_id`='$selected_route_id'
+                                            GROUP BY 
+                                                journey_date 
+                                            HAVING
+                                                COUNT(*) < 35";
+                                        $result2 = mysqli_query($db,$query2) or die('Error: '.mysql_error ());
+                                        while($row = mysqli_fetch_assoc($result2)) {
+                                            $count = $row['COUNT'];
+                                            if ($count < "32") {
+                                                // echo $row['journey_date'].": <font color= 'red'>".$row['COUNT']."</font><br>";
+                                                $availableNo = 32 - $count;
+                                                echo "<td>".$availableNo." Seat</td>";
+                                            } else {
+                                                echo "<td> Not Available </td>";
+                                            }
+                                        }
+                                    echo "<td><input type='submit' name='bookNow' value='Book Now'>";
+                                }
+                                else{
+                                    echo "</table> No data available in table.";
+                                }
+                            }
+                        }
+                        else{
+                                echo "No data found <br/>";
+                            }
+                    ?>
+                    </table>
+
+                </div>
+            </form>
+
+            <table border="0" cellpadding="0" cellspacing="20" style="margin: 5px 0;">
+
+                <thead style="text-align: left;">
+                    <tr>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Via Station</th>
+                        <th>Fare</th>
+                        <th>Route Id</th>
+                    </tr>
+                </thead>
+                <?php
+
+                    $route_sql = "select * from `route_detail`";
+                    $route_run = mysqli_query($db,$route_sql);
+
+                    if(!$route_run)
+                        die("Unable to run query".mysqli_error());
+
+                    $no_rows = mysqli_num_rows($route_run);
+                    if($no_rows>0){
+                        while($data = mysqli_fetch_assoc($route_run)){
+
+                            $departure_station = $data['departure_station'];
+                            $arrival_station = $data['arrival_station'];
+
+                            $journeyFrom = $_SESSION['journeyFrom'];
+                            $journeyTo = $_SESSION['journeyTo']; 
+                            $dateOfJourney = $_SESSION['dateOfJourney'];
+
+                            if(($journeyFrom == $departure_station) && ($journeyTo == $arrival_station)){
+                                echo "<td>".$data['departure_station']."</td>";
+                                echo "<td>".$data['arrival_station']."</td>";
+                                echo "<td>".$data['via_station']."</td>";
+                                echo "<td>".$data['rent']."</td>";
+                                echo "<td>".$data['route_id']."</td>";
+                            }
+                        }
+                    }
+                    echo "Session Route Id : ".$_SESSION['selected_route_id'];
+                ?>
+            </table>
 
         </div>
+
         <!--#contentwrapper-->
         <div class="clear"></div>
         <div id="footer">

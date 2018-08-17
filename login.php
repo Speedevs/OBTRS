@@ -1,6 +1,14 @@
 <?php
     include 'dbconnect.php';
     include 'server.php';  
+
+    if (isset($_SESSION['cust_name']))
+    {
+        header("location: index.php");
+    }
+    else{ //Continue to current page
+        header( 'Content-Type: text/html; charset=utf-8' );
+    }
 ?>
 
 <!DOCTYPE html>
@@ -26,14 +34,8 @@
                 <header>
                     <ul>
                         <li><a href="index.php">Home</a></li>
-                        <li><a href="login.php">Login</a></li>
+                        <!-- <li><a href="login.php">Login</a></li> -->
                         <li><a href="register.php">Register</a></li>
-                        <?php
-                            if (isset($_SESSION['cust_id']))
-                            {
-                                echo "<li><a href=logout.php>Logout</a></li>";
-                            }
-                        ?>
                     </ul>
                 </header>
             </div>

@@ -51,6 +51,7 @@
     border: 1px solid #A4A4A4;
     margin-left: 10px;
     margin-top: 50px;
+    position: relative;
 }
 
 #print {
@@ -60,7 +61,6 @@
     margin-top: 5px;
     margin-bottom: 10px;
 }
-
 
 #timeOut {
     height: 10px;
@@ -101,7 +101,6 @@
 
 #place .seat {
     background: url("../image/booker/available_seat_img.gif") no-repeat scroll 0 0 transparent;
-
 }
 
 #place .selectedSeat {
@@ -121,8 +120,8 @@
 #place .hidingSeats {
     display: none;
     background-image: url("images/hide_seat_img.gif");
-
 }
+
 
 /*    #place .row-3, #place .row-4{
         margin-top:10px;
@@ -143,26 +142,25 @@
 }
 
 #a_seat {
-    background: url('../image/booker/available_seat_img.gif') no-repeat scroll 0 0 transparent;
+    background: url('../image/booker/available_seat_img.gif') no-repeat scroll 0 0 transparent !important;
 }
 
 #b_seat {
-    background: url('../image/booker/booked_seat_img.gif') no-repeat scroll 0 0 transparent;
+    background: url('../image/booker/booked_seat_img.gif') no-repeat scroll 0 0 transparent !important;
 }
 
 #s_seat {
-    background: url('../image/booker/selected_seat_img.gif') no-repeat scroll 0 0 transparent;
+    background: url('../image/booker/selected_seat_img.gif') no-repeat scroll 0 0 transparent !important;
 }
 
 #h_seat {
-    background: url('../image/booker/pending_seat_img.gif') no-repeat scroll 0 0 transparent;
+    background: url('../image/booker/pending_seat_img.gif') no-repeat scroll 0 0 transparent !important;
 }
 
 #selecting_seate_for_booker {
     width: 155px;
     min-width: 155px;
     max-width: 155px;
-
     height: 75px;
     min-height: 75px;
     max-height: 75px;
