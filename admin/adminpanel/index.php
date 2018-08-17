@@ -22,11 +22,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="adminpanel-assets/css/style.css" />
     <link rel="stylesheet" href="adminpanel-assets/css/normalize.css" />
+    <script type="text/javascript" src="adminpanel-assets/js/jquery.min.js"></script>
+
     <script>
         window.onload = function () {
             document.body.setAttribute("class", document.body.getAttribute('class') + " loaded")
         }
+
     </script>
+
+    <script type="text/javascript" src="adminpanel-assets/js/adminpanel-function.js"></script>
 </head>
 
 <body>
@@ -44,76 +49,28 @@
                     <?php } ?>
                 </span>
             </div>
-            <div class="sidebar-wrapper ps-container">
-                <ul class="nav">
-                    <li class="active">
-                        <a href="index.php">
-                            <p>Dashboard</p>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="./schedule.php">
-                            <p>Schedule</p>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="./booking.php">
-                            <p>Booking</p>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="./buses.php">
-                            <p>Buses</p>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="./routes.php">
-                            <p>Routes</p>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="./bus-type.php">
-                            <p>Bus-type</p>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="./setting.php">
-                            <p>Settings</p>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="./users.php">
-                            <p>Users</p>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="../logout.php">
-                            <p>Logout</p>
-                        </a>
-                    </li>
-                </ul>
-            </div>
+
+            <?php
+                include 'side-menu.php';
+            ?>
+            
             <div class="sidebar-background" style="background-image: url(../admin/assets/img/sidebar-1.jpg);"></div>
         </div>
         <div class="main-panel ps-container ps-theme-default ps-active-y">
             <div class="content">
                 <div class="container-fluid">
-                    <div class="row"> </div>
+                    <div class="row">
+                    </div>
                 </div>
             </div>
+            
+            <?php
+                include 'footer.php';
+            ?>
+            
         </div>
-        <!--
-        <footer class="footer">
-            <div class="container-fluid">
-                <p class="copyright pull-right"> ©
-                    <script>
-                        document.write(new Date().getFullYear())
-                    </script><a href="#">Team</a>, made with love </p>
-            </div>
-        </footer>
--->
     </div>
-    <script src="../assets/js/jquery-2.1.4.min.js"></script>
+
 </body>
 
 </html>

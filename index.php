@@ -1,6 +1,6 @@
 <?php
     include 'dbconnect.php';
-    session_start(); 
+    include 'server.php';
 
 	if (!isset($_SESSION['cust_id'])) {
 		$_SESSION['msg'] = "You must log in first";
@@ -14,7 +14,7 @@
 		session_destroy();
 		unset($_SESSION['cust_name']);
 		header("location: login.php");
-	}
+    }
 
 ?>
 
@@ -51,8 +51,10 @@
                 <header>
                     <ul>
                         <li><a href="index.php">Home</a></li>
-                        <li><a href="login.php">Login</a></li>
-                        <li><a href="register.php">Register</a></li>
+                        <?php  if (!isset($_SESSION['cust_name'])) {?>
+                            <li><a href="login.php">Login</a></li>
+                            <li><a href="register.php">Register</a></li>
+                        <?php }?>
                         <?php  if (isset($_SESSION['cust_name'])) {?>
                             <li> <a href="index.php?logout='1'">Logout</a> </li>
                         <?php }?>
@@ -87,7 +89,8 @@
             </h1>
 
             <div class="abc">
-                <form id="search_buses_form" action="#" method="post" class="has-validation-callback">
+            <?php include('errors.php'); ?>
+                <form id="search_buses_form" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="has-validation-callback">
 
                 	<label for="journeyFrom" class="required">Journey From</label>
                 	<select class="select" name="journeyFrom" id="journeyFrom" style="width:150px;" data-validation="required">
@@ -156,9 +159,18 @@
 
         <!--#contentwrapper-->
         <div class="clear"></div>
-        <div id="footer">
-            Copyright © OBTRS 2018.<br> All Rights Reserved.
-        </div>
+
+        <footer id="footer" class="footer">
+            <div class="container-fluid">
+                <p class="copyright pull-right">Copyright ©
+                    <script>
+                        document.write(new Date().getFullYear())
+                    </script><a href="#"> OBTRS</a>. 
+                    <br> All Rights Reserved.
+                </p>
+            </div>
+        </footer>
+        
     </div>
 </body>
 

@@ -1,5 +1,5 @@
 <?php
-    include_once '../dbconnect.php';
+    include '../dbconnect.php';
     include '../adminfunction.php';
 
     session_start();
@@ -13,15 +13,77 @@
     }
 
 	if (isset($_POST['insert-route'])) {
+        $error = false;
+        
 		$journeyFrom = $_POST['journeyFrom'];
 		$journeyTo = $_POST['journeyTo'];
 		$viaStation = $_POST['viaStation'];
-		$rent = $_POST['rent'];
+        $rent = $_POST['fare'];
+        
+        if (empty($journeyFrom)) { 
+            $error = true;
+            array_push($errors, "journeyFrom is required"); 
+        }
+        if (empty($journeyTo)) { 
+            $error = true;
+            array_push($errors, "journeyTo is required"); 
+        }
+        if (empty($viaStation)) { 
+            $error = true;
+            array_push($errors, "viaStation is required"); 
+        }
+        if (empty($rent)) { 
+            $error = true;
+            array_push($errors, "rent is required"); 
+        }
+    
+        if(!$error){
+            $query = "INSERT INTO route_detail(
+                departure_station,
+                arrival_station,
+                via_station,
+                rent
+                ) 
+                VALUES(
+                    '" . $journeyFrom . "',
+                    '" . $journeyTo . "',
+                    '" . $viaStation . "',
+                    '" . $rent . "'
+                )";
+            if(mysqli_query($con, $query)) {
+                $successmsg = "Successfully Registered!";
+                
+                $id = mysqli_insert_id($con);
 
-		$query = "INSERT INTO route_detail(departure_station,arrival_station,via_station,rent) VALUES('" . $journeyFrom . "', '" . $journeyTo . "', '" . $viaStation . "', '" . $rent . "')";
-		if(mysqli_query($con, $query)) {
-			$successmsg = "Successfully Registered!";
-		}
+                print '
+                <script type="text/javascript">
+                    var carnr;        
+                    carnr = "'.$id.'"
+                    console.log(carnr);
+                </script>';
+                
+                $query1 = "INSERT INTO time_table (
+                    route_id, 
+                    departure_station, 
+                    arrival_station, 
+                    via_station, 
+                    rent
+                    ) 
+                    VALUES(
+                        '$id', 
+                        '$journeyFrom',
+                        '$journeyTo',
+                        '$viaStation',
+                        '$rent'
+                    )";
+                if(mysqli_query($con, $query1)){
+                    $successmsg = "Data Successfully Registered!";
+                }
+                else{
+                    $errormsg = "Error...!";
+                }
+            }
+        }
 	}
 
 
@@ -36,12 +98,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="adminpanel-assets/css/style.css" />
     <link rel="stylesheet" href="adminpanel-assets/css/normalize.css" />
+    <script type="text/javascript" src="adminpanel-assets/js/jquery.min.js"></script>
+
     <script>
         window.onload = function () {
             document.body.setAttribute("class", document.body.getAttribute('class') + " loaded")
         }
-
     </script>
+
+    <script type="text/javascript" src="adminpanel-assets/js/adminpanel-function.js"></script>
+
 </head>
 
 <body>
@@ -59,111 +125,123 @@
                     <?php } ?>
                 </span>
             </div>
-            <div class="sidebar-wrapper ps-container">
-                <ul class="nav">
-                    <li><a href="index.php"><span class="menu-dashboard">&nbsp;</span>Dashboard</a></li>
-                    <li><a href="schedule.php"><span class="menu-schedule">&nbsp;</span>Schedule</a></li>
-                    <li><a href="booking.php"><span class="menu-reservations">&nbsp;</span>Bookings</a></li>
-                    <li><a href="buses.php"><span class="menu-buses">&nbsp;</span>Buses</a></li>
-                    <li class="active"><a href="routes.php"><span class="menu-routes">&nbsp;</span>Routes</a></li>
-                    <li><a href="bus-type.php"><span class="menu-bus-types">&nbsp;</span>Bus Types</a></li>
-                    <li><a href="#"><span class="menu-options">&nbsp;</span>Settings</a></li>
-                    <li><a href="#"><span class="menu-users">&nbsp;</span>Users</a></li>
-                    <li><a href="../logout.php"><span class="menu-logout">&nbsp;</span>Logout</a></li>
-                </ul>
-            </div>
+         
+         <!-- Side Menu -->
+            <?php
+                include 'side-menu.php';
+            ?>
+            
             <div class="sidebar-background" style="background-image: url(../admin/assets/img/sidebar-1.jpg);"></div>
         </div>
+        
         <div class="main-panel ps-container ps-theme-default ps-active-y">
             <div class="content">
                 <div class="container-fluid">
                     <div class="row" style="margin: 25px 0;">
-						<form id="search_buses_form" action="#" method="post" class="has-validation-callback">
-
-						<label for="journeyFrom" class="required">Journey From</label>
-						<input type="text" name="journeyFrom" placeholder="journeyFrom"/>
-						<br>
-
-						<label for="journeyTo" class="required">Journey To</label>
-						<input type="text" name="journeyTo" placeholder="journeyTo" required="required" />
-						<br>
-
-						<label for="via-station" class="required">Via-Station</label>
-						<input type="text" name="viaStation" placeholder="Via-Station" required="required" />
-						<br>
-
-						<label for="rent" class="required">Rent</label>
-						<input type="text" name="rent" placeholder="Rent" required="required" />
-						<br>
-
-						<input style="margin:5px 25px 0;" type="submit" name="insert-route" id="insert-route" value="Insert Route">
-                        <a href="#">cancel</a>
+                        <span class="text-success">
+                            <?php if (isset($_SESSION['updated_success_msg'])) {
+                                 echo $_SESSION['updated_success_msg']; 
+                                 unset($_SESSION['updated_success_msg']);
+                                } 
+                            ?>
+                        </span>
+                        <span class="text-danger">
+                            <?php if (isset($_SESSION['updated_error_msg'])) {
+                                  echo $_SESSION['updated_error_msg'];  
+                                  unset($_SESSION['updated_error_msg']);
+                                } 
+                            ?>
+                        </span>
+                    </div>
+                    <div class="row" style="margin: 25px 0;">
+                    <h1 class="text-danger"> Add New Route.</h1>
+						<form action="#" method="post" class="insert_route">
+                            <div class="input-group">
+                                <label for="journeyFrom" class="required">Journey From</label>
+                                <input type="text" name="journeyFrom" placeholder="Journey From" required="required"/>
+                            </div>
+                            <div class="input-group">
+                                <label for="journeyTo" class="required">Journey To</label>
+                                <input type="text" name="journeyTo" placeholder="Journey To" required="required" />
+                            </div>
+                            <div class="input-group">
+                                <label for="viaStation" class="required">Via-Station</label>
+                                <input type="text" name="viaStation" placeholder="Via-Station" required="required" />
+                            </div>
+                            <div class="input-group">
+                                <label for="fare" class="required">Fare</label>
+                                <input type="text" name="fare" placeholder="Fare" required="required" />
+                            </div>
+                            <div class="input-group" style="display: block;">
+                                <input type="submit" name="insert-route" id="insert-route" value="Insert Route">
+                                <a href="#" style="margin-left: 10px;">cancel</a>
+                            </div>
+                                
+                            <br>
                             
-                        <span class="text-success"><?php if (isset($successmsg)) { echo $successmsg; } ?></span>
-                        <span class="text-danger"><?php if (isset($errormsg)) { echo $errormsg; } ?></span>
+                            <span class="text-success"><?php if (isset($successmsg)) { echo $successmsg; } ?></span>
+                            <span class="text-danger"><?php if (isset($errormsg)) { echo $errormsg; } ?></span>
 
-					</form>
+                        </form>
 					</div>
 					<div class="row" style="margin: 25px 0;">
-						
+                        <table border="0" cellpadding="0" cellspacing="20" style="margin: 5px 0;">
 
-<table border="0" cellpadding="0" cellspacing="20" style="margin: 5px 0;">
+                            <thead style="text-align: left;">
+                                <tr>
+                                    <th>S.N</th>
+                                    <th>Route ID</th>
+                                    <th>From</th>
+                                    <th>To</th>
+                                    <th>Via Station</th>
+                                    <th>Fare</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
 
-    <thead style="text-align: left;">
-        <tr>
-            <th>Route ID</th>
-            <th>Departure Station</th>
-            <th>Arrival Station</th>
-            <th>Via Station</th>
-            <th>Rent</th>
-        </tr>
-    </thead>
+                        <?php
 
-<?php
+                        $sql = "SELECT * FROM `route_detail`";
+                        $run = mysqli_query($con,$sql);
 
-$sql = "select * from `route_detail`";
-$run = mysqli_query($con,$sql);
+                        if(!$run)
+                            die("Unable to run query".mysqli_error($con));
 
-if(!$run)
-	die("Unable to run query".mysqli_error());
+                        $rows = mysqli_num_rows($run);
+                        if($rows>0){
+                            $sn = 1;
+                            while($data = mysqli_fetch_object($run)){
+                                echo "<tr><td>".$sn."</td>";
+                                echo "<td>".$data -> route_id."</td>";
+                                echo "<td>".$data -> departure_station."</td>";
+                                echo "<td>".$data -> arrival_station."</td>";
+                                echo "<td>".$data -> via_station."</td>";
+                                echo "<td>".$data -> rent."</td>";
 
-$rows = mysqli_num_rows($run);
-if($rows>0){
-	while($data = mysqli_fetch_object($run)){
-		echo "<td>".$data -> route_id."</td>";
-        echo "<td>".$data -> departure_station."</td>";
-        echo "<td>".$data -> arrival_station."</td>";
-        echo "<td>".$data -> via_station."</td>";
-        echo "<td>".$data -> rent."</td>";
-
-        echo "<td><a href = delete.php?id=".$data -> route_id."> delete </a> | 
-        <a href = edit.php?id=".$data -> route_id."> edit </a></td></tr>";
-	}
-}
-else{
-		echo "No data found <br/>";
-	}
-?>
-</table>
+                                echo "<td><a href = route_edit.php?route_id=".$data -> route_id."> Edit </a> | 
+                                <a href = route_delete.php?route_id=".$data -> route_id."> Delete </a></td></tr>";
+                                
+                                $sn++;
+                            }
+                        }
+                        else{
+                                echo "No data found <br/>";
+                            }
+                        ?>
+                        </table>
 
 					</div>
                 </div>
             </div>
 
-             <footer class="footer">
-                <div class="container-fluid">
-                    <p class="copyright pull-right"> ©
-                        <script>
-                            document.write(new Date().getFullYear())
-                        </script><a href="#"> Team</a>, made with <span class="heart">❤</span> </p>
-                </div>
-            </footer>
-
+         
+            <?php
+                include 'footer.php';
+            ?>
+            
         </div>
 
     </div>
-    <script src="../assets/js/jquery-2.1.4.min.js"></script>
-    <script src="adminpanel-assets/js/adminpanel-function.js"></script>
 </body>
 
 </html>

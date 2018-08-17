@@ -1,224 +1,195 @@
-<!doctype html>
-<html>
+<?php
+    include_once '../dbconnect.php';
+
+    session_start();
+
+	if (!isset($_SESSION['usr_id']))
+    {
+        header("location: ../index.php");
+    }
+    else{ //Continue to current page
+        header( 'Content-Type: text/html; charset=utf-8' );
+    }
+
+	if (isset($_POST['insert-bus'])) {
+        $error = false;
+
+        $busNo = $_POST['busNo'];
+        $busType = $_POST['busType'];
+        $totalSeat = $_POST['totalSeat'];
+
+        if (empty($busNo)) { 
+            $error = true;
+            array_push($errors, "busNo is required"); 
+        }
+        if (empty($busType)) { 
+            $error = true;
+            array_push($errors, "busType is required"); 
+        }
+        if (empty($totalSeat)) { 
+            $error = true;
+            array_push($errors, "totalSeat is required"); 
+        }
+        if(!$error){
+            $query = "INSERT INTO `bus_detail`(bus_no, bus_type, total_seat) VALUES('". $busNo. "', '". $busType. "', '". $totalSeat. "' )";
+            if(mysqli_query($con, $query)) {
+                $successmsg = "Successfully Registered!";
+            }
+            else{
+                $errormsg = "Error...!";
+            }
+        }
+
+	}
+
+
+?>
+
+<!DOCTYPE html>
+<html lang="en" class="js csstransitions">
 
 <head>
-    <title>OBTRS</title>
-    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-    <link type="text/css" rel="stylesheet" href="./assets/css/reset.css" />
-    <link type="text/css" rel="stylesheet" href="./assets/css/jquery-ui.min.css" />
-    <link type="text/css" rel="stylesheet" href="./assets/css/pj-all.css" />
-    <link type="text/css" rel="stylesheet" href="./assets/css/admin.css" />
-    <script src="./assets/js/jquery.min.js"></script>
-    <script src="./assets/js/jquery-migrate.min.js"></script>
-    <script src="./assets/js/pjAdminCore.js"></script>
-    <script src="./assets/js/jquery-ui.custom.min.js"></script>
-    <!--[if gte IE 9]>
-  		<style type="text/css">.gradient {filter: none}</style>
-		<![endif]-->
+    <title>Admin Panel</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="adminpanel-assets/css/style.css" />
+    <link rel="stylesheet" href="adminpanel-assets/css/normalize.css" />
+    <script type="text/javascript" src="adminpanel-assets/js/jquery.min.js"></script>
+
+    <script>
+        window.onload = function () {
+            document.body.setAttribute("class", document.body.getAttribute('class') + " loaded")
+        }
+    </script>
+
+    <script type="text/javascript" src="adminpanel-assets/js/adminpanel-function.js"></script>
+
 </head>
 
 <body>
-    <div id="container">
-        <div id="header">
-            <div id="logo"> <a href="#" target="_blank" rel="nofollow">Bus Reservation System</a></div>
-        </div>
-        <div id="middle">
-            <div id="leftmenu">
-                <div class="leftmenu-top"></div>
-                <div class="leftmenu-middle">
-                    <ul class="menu">
-                        <li><a href="index.php"><span class="menu-dashboard">&nbsp;</span>Dashboard</a></li>
-                        <li><a href="schedule.php"><span class="menu-schedule">&nbsp;</span>Schedule</a></li>
-                        <li><a href="booking.php"><span class="menu-reservations">&nbsp;</span>Bookings</a></li>
-                        <li><a href="buses.php"><span class="menu-buses">&nbsp;</span>Buses</a></li>
-                        <li><a href="routes.php"><span class="menu-routes">&nbsp;</span>Routes</a></li>
-                        <li><a href="bus-type.php"><span class="menu-bus-types">&nbsp;</span>Bus Types</a></li>
-                        <li><a href="#"><span class="menu-options">&nbsp;</span>Settings</a></li>
-                        <li><a href="#"><span class="menu-users">&nbsp;</span>Users</a></li>
-                        <li><a href="#"><span class="menu-logout">&nbsp;</span>Logout</a></li>
-                    </ul>
-                </div>
-                <div class="leftmenu-bottom"></div>
+    <div class="wrapper">
+        <div class="sidebar" data-color="red" data-image="../assets/img/sidebar-1.jpg">
+            <div class="logo"> <a href="#" class="simple-text">
+                    Admin Panel
+                    </a>
+                    <?php
+                        if (isset($_SESSION['usr_id'])) { ?>
+                            <span data-hover="Welcome">Welcome - &nbsp;<?php echo $_SESSION['usr_name']; ?>
+                            <?php } else { ?>
+                            <span data-hover="Welcome">Welcome
+                                </span>
+                    <?php } ?>
+                </span>
             </div>
-            <div id="right">
-                <div class="content-top"></div>
-                <div class="content-middle" id="content">
-                    <div class="notice-box">
-                        <div class="notice-top"></div>
-                        <div class="notice-middle"> <span class="notice-info">&nbsp;</span> <span class="block bold">Bus Types list</span><span class="block">Below is a list of all bus types. Each bus you create has to have bus type defined. Trough bus types you can define the number of seats and the seats map of each bus. This will let customers make bookings and reserve their seats and tickets.</span>
-                            <a href="#" class="notice-close"></a>
-                        </div>
-                        <div class="notice-bottom"></div>
+
+            <!-- Side Menu -->
+            <?php
+                include 'side-menu.php';
+            ?>
+            
+            <div class="sidebar-background" style="background-image: url(../admin/assets/img/sidebar-1.jpg);"></div>
+        </div>
+
+        <div class="main-panel ps-container ps-theme-default ps-active-y">
+            <div class="content">
+                <div class="container-fluid">
+                    <div class="row" style="margin: 25px 0;">
+                        <span class="text-success">
+                            <?php if (isset($_SESSION['updated_success_msg'])) {
+                                    echo $_SESSION['updated_success_msg']; 
+                                    unset($_SESSION['updated_success_msg']);
+                                } 
+                            ?>
+                        </span>
+                        <span class="text-danger">
+                            <?php if (isset($_SESSION['updated_error_msg'])) {
+                                    echo $_SESSION['updated_error_msg'];  
+                                    unset($_SESSION['updated_error_msg']);
+                                } 
+                            ?>
+                        </span>
                     </div>
-                    <div class="b10">
-                        <form action="/1528013160_785/index.php" method="get" class="float_left r5">
-                            <input type="hidden" name="controller" value="pjAdminBusTypes">
-                            <input type="hidden" name="action" value="pjActionCreate">
-                            <input type="submit" class="pj-button" value="+ Add bus type"> </form>
-                        <form action="" method="get" class="float_left pj-form frm-filter">
-                            <input type="text" name="q" class="pj-form-field pj-form-field-search w150" placeholder="Search"> </form>
-                        <div class="float_right t5"> <a href="#" class="pj-button btn-all">All</a> <a href="#" class="pj-button btn-filter btn-status" data-column="status" data-value="T">Active</a> <a href="#" class="pj-button btn-filter btn-status" data-column="status" data-value="F">Inactive</a> </div>
-                        <br class="clear_both"> </div>
-                    <div id="grid" class="pj-grid">
-                        <table cellpadding="0" cellspacing="0" class="pj-table" style="width: 100%;">
-                            <thead>
+                    <div class="row" style="margin: 25px 0;">
+                        <h1 class="text-danger"> Bus Type.</h1>
+						<form action="#" method="post" class="bus_type">
+                            
+                            <div class="input-group">
+                                <label for="busNo" class="required">Bus No</label>
+                                <input type="text" name="busNo" placeholder="BA2KA2894" required="required"/>
+                            </div>
+                            
+                            <div class="input-group">
+                                <label for="busType" class="required">Bus Type</label>
+                                <input type="text" name="busType" placeholder="Deluxe" required="required"/>
+                            </div>
+                            
+                            <div class="input-group">
+                                <label for="totalSeat" class="required">Total Seat</label>
+                                <input type="text" name="totalSeat" placeholder="32" required="required"/>
+                            </div>
+
+                            <div class="input-group" style="display: block;">
+                                <input type="submit" name="insert-bus"value="Insert Bus Type">
+                                <a href="bus-type.php" style="margin-left: 10px;">Cancel</a>
+                            </div>    
+
+                            <br>
+ 
+                            <span class="text-success"><?php if (isset($successmsg)) { echo $successmsg; } ?></span>
+                            <span class="text-danger"><?php if (isset($errormsg)) { echo $errormsg; } ?></span>
+
+                        </form>
+					</div>
+                    <div class="row" style="margin: 25px 0;">
+                        <table border="0" cellpadding="0" cellspacing="20" style="margin: 5px 0;">
+
+                            <thead style="text-align: left;">
                                 <tr>
-                                    <th>
-                                        <input type="checkbox" class="pj-table-toggle-rows">
-                                    </th>
-                                    <th style="width: 280px;">
-                                        <div class="pj-table-sort-label">Name</div>
-                                        <div class="pj-table-sort">
-                                            <a href="#" class="pj-table-sort-up pj-table-sort-up-active"></a>
-                                            <a href="#" class="pj-table-sort-down"></a>
-                                        </div>
-                                    </th>
-                                    <th style="width: 100px;">Map</th>
-                                    <th style="width: 120px;">
-                                        <div class="pj-table-sort-label">Seat(s)</div>
-                                        <div class="pj-table-sort">
-                                            <a href="#" class="pj-table-sort-up"></a>
-                                            <a href="#" class="pj-table-sort-down"></a>
-                                        </div>
-                                    </th>
-                                    <th style="width: 90px;">
-                                        <div class="pj-table-sort-label">Status</div>
-                                        <div class="pj-table-sort">
-                                            <a href="#" class="pj-table-sort-up"></a>
-                                            <a href="#" class="pj-table-sort-down"></a>
-                                        </div>
-                                    </th>
-                                    <th>&nbsp;</th>
+                                    <th>Bus No.</th>
+                                    <th>Bus Type</th>
+                                    <th>Total Seat</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr class="pj-table-row-odd" data-id="id_10">
-                                    <td>
-                                        <input type="checkbox" name="record[]" value="10" class="pj-table-select-row">
-                                    </td>
-                                    <td><span class="pj-table-cell-label"> Scania K113TRBL</span></td>
-                                    <td><span class="pj-table-cell-label">Yes</span></td>
-                                    <td><span class="pj-table-cell-label">14</span></td>
-                                    <td class="pj-table-cell-editable"><span class="pj-table-cell-label pj-status pj-status-T">Active</span>
-                                        <select data-name="status" class="pj-form-field pj-form-select pj-selector-editable" style="display: none;">
-                                            <option value="T">Active</option>
-                                            <option value="F">Inactive</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <a href="index.php?controller=pjAdminBusTypes&amp;action=pjActionUpdate&amp;id=10" class="pj-table-icon-edit"></a>
-                                        <a href="index.php?controller=pjAdminBusTypes&amp;action=pjActionDeleteBusType&amp;id=10" class="pj-table-icon-delete"></a>
-                                    </td>
-                                </tr>
-                                <tr class="pj-table-row-even" data-id="id_1">
-                                    <td>
-                                        <input type="checkbox" name="record[]" value="1" class="pj-table-select-row">
-                                    </td>
-                                    <td><span class="pj-table-cell-label">16 seats</span></td>
-                                    <td><span class="pj-table-cell-label">Yes</span></td>
-                                    <td><span class="pj-table-cell-label">16</span></td>
-                                    <td class="pj-table-cell-editable"><span class="pj-table-cell-label pj-status pj-status-T">Active</span>
-                                        <select data-name="status" class="pj-form-field pj-form-select pj-selector-editable" style="display: none;">
-                                            <option value="T">Active</option>
-                                            <option value="F">Inactive</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <a href="index.php?controller=pjAdminBusTypes&amp;action=pjActionUpdate&amp;id=1" class="pj-table-icon-edit"></a>
-                                        <a href="index.php?controller=pjAdminBusTypes&amp;action=pjActionDeleteBusType&amp;id=1" class="pj-table-icon-delete"></a>
-                                    </td>
-                                </tr>
-                                <tr class="pj-table-row-odd" data-id="id_2">
-                                    <td>
-                                        <input type="checkbox" name="record[]" value="2" class="pj-table-select-row">
-                                    </td>
-                                    <td><span class="pj-table-cell-label">55 seats</span></td>
-                                    <td><span class="pj-table-cell-label">Yes</span></td>
-                                    <td><span class="pj-table-cell-label">55</span></td>
-                                    <td class="pj-table-cell-editable"><span class="pj-table-cell-label pj-status pj-status-T">Active</span>
-                                        <select data-name="status" class="pj-form-field pj-form-select pj-selector-editable" style="display: none;">
-                                            <option value="T">Active</option>
-                                            <option value="F">Inactive</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <a href="index.php?controller=pjAdminBusTypes&amp;action=pjActionUpdate&amp;id=2" class="pj-table-icon-edit"></a>
-                                        <a href="index.php?controller=pjAdminBusTypes&amp;action=pjActionDeleteBusType&amp;id=2" class="pj-table-icon-delete"></a>
-                                    </td>
-                                </tr>
-                                <tr class="pj-table-row-even" data-id="id_3">
-                                    <td>
-                                        <input type="checkbox" name="record[]" value="3" class="pj-table-select-row">
-                                    </td>
-                                    <td><span class="pj-table-cell-label">61 seats</span></td>
-                                    <td><span class="pj-table-cell-label">Yes</span></td>
-                                    <td><span class="pj-table-cell-label">61</span></td>
-                                    <td class="pj-table-cell-editable"><span class="pj-table-cell-label pj-status pj-status-T">Active</span>
-                                        <select data-name="status" class="pj-form-field pj-form-select pj-selector-editable" style="display: none;">
-                                            <option value="T">Active</option>
-                                            <option value="F">Inactive</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <a href="index.php?controller=pjAdminBusTypes&amp;action=pjActionUpdate&amp;id=3" class="pj-table-icon-edit"></a>
-                                        <a href="index.php?controller=pjAdminBusTypes&amp;action=pjActionDeleteBusType&amp;id=3" class="pj-table-icon-delete"></a>
-                                    </td>
-                                </tr>
-                            </tbody>
+
+                        <?php
+
+                            $sql = "SELECT * from `bus_detail`";
+                            $run = mysqli_query($con,$sql);
+
+                            if(!$run)
+                                die("Unable to run query".mysqli_error());
+
+                            $rows = mysqli_num_rows($run);
+                            if($rows>0){
+                                while($data = mysqli_fetch_object($run)){
+                                    echo "<td>".$data -> bus_no."</td>";
+                                    echo "<td>".$data -> bus_type."</td>";
+                                    echo "<td>".$data -> total_seat."</td>";
+
+                                    echo "<td><a href = bus_type_edit.php?bus_no=".$data -> bus_no."> Edit </a> | 
+                                    <a href = bus_type_delete.php?bus_no=".$data -> bus_no."> Delete </a></td></tr>";
+                                }
+                            }
+                            else{
+                                    echo "No data found <br/>";
+                                }
+                        ?>
                         </table>
-                        <div class="pj-paginator" style="width: 100%;"><a href="#" class="pj-button pj-paginator-button-actions">Choose Action<span class="pj-button-arrow-down"></span></a><span class="pj-menu-list-wrap" style="display: none;"><span class="pj-menu-list-arrow"></span>
-                            <ul class="pj-menu-list">
-                                <li><a href="index.php?controller=pjAdminBusTypes&amp;action=pjActionDeleteBusTypeBulk" class="pj-paginator-action">Delete selected</a></li>
-                                <li>
-                                    <a href="index.php?controller=pjAdminBusTypes&amp;action=pjActionStatusBusType" class="pj-paginator-action"></a>
-                                </li>
-                                <li>
-                                    <a href="index.php?controller=pjAdminBusTypes&amp;action=pjActionExportBusType" class="pj-paginator-action"></a>
-                                </li>
-                            </ul>
-                            </span><span class="pj-paginator-goto">Go to page: <input type="text" name="goto" value="1" class="pj-form-field pj-form-text pj-selector-goto" style="width: 20px;"></span>
-                            <ul class="pj-paginator-list"><a href="#" title="Go to page: 1" data-page="1" class="pj-paginator-list-paginate pj-paginator-list-active">1</a></ul><span class="pj-paginator-total">Total items: 4 / <a href="#" class="pj-button pj-paginator-row-count">10</a><span class="pj-menu-list-wrap" style="display: none;"><span class="pj-menu-list-arrow"></span>
-                            <ul class="pj-menu-list">
-                                <li><span style="font-size: 11px;">Items per page</span></li>
-                                <li><a href="#" data-rowcount="10" class="pj-selector-row-count">10</a></li>
-                                <li><a href="#" data-rowcount="20" class="pj-selector-row-count">20</a></li>
-                                <li><a href="#" data-rowcount="50" class="pj-selector-row-count">50</a></li>
-                                <li><a href="#" data-rowcount="100" class="pj-selector-row-count">100</a></li>
-                                <li><a href="#" data-rowcount="200" class="pj-selector-row-count">200</a></li>
-                                <li><a href="#" data-rowcount="500" class="pj-selector-row-count">500</a></li>
-                            </ul>
-                            </span>
-                            </span><span style="clear: both;"></span></div>
-                    </div>
-                    <div class="pj-preloader" style="display: none; left: 432.5px; top: 284px; width: 742px; height: 260px;"></div>
-                    <script type="text/javascript">
-                        var myLabel = myLabel || {};
-                        myLabel.name = "Name";
-                        myLabel.map = "Map";
-                        myLabel.seats = "Seat(s)";
-                        myLabel.yes = "Yes";
-                        myLabel.no = "No";
-                        myLabel.delete_selected = "Delete selected";
-                        myLabel.delete_confirmation = "Are you sure that you want to delete selected record(s)?";
-                        myLabel.active = "Active";
-                        myLabel.inactive = "Inactive";
-                        myLabel.status = "Status";
-                    </script>
+
+					</div>
+					
                 </div>
-                <div class="content-bottom"></div>
             </div>
-            <!-- content -->
-            <div class="clear_both"></div>
+
+         
+            <?php
+                include 'footer.php';
+            ?>
+            
         </div>
-        <!-- middle -->
+
     </div>
-    <!-- container -->
-    <div id="footer-wrap">
-        <div id="footer">
-            <p>Copyright &copy; 2018 <a href="#" target="_blank">OBTRS</a></p>
-        </div>
-    </div>
-    <script async src="./assets/load.js"></script>
 </body>
 
 </html>

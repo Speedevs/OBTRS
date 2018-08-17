@@ -43,7 +43,7 @@
                 </footer>
 -->
             </div>
-	<div id="signup">
+	        <div id="signup">
 				<h1>sign-up</h1>
                 <form role="form" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" name="signupform" class="signup-form">
                     <div class="input-container">
