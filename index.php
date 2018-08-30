@@ -51,6 +51,7 @@
                 <header>
                     <ul>
                         <li><a href="index.php">Home</a></li>
+                        <li><a href="timetable.php">Time Table</a></li>
                         <?php  if (!isset($_SESSION['cust_name'])) {?>
                             <li><a href="login.php">Login</a></li>
                             <li><a href="register.php">Register</a></li>

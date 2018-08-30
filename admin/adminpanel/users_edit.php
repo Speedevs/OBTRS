@@ -51,7 +51,7 @@
             </div>
          
          <!-- Side Menu -->
-        <div class="sidebar-wrapper ps-container">
+         <div class="sidebar-wrapper ps-container">
             <ul class="nav">
                 <li>
                     <a href="index.php">
@@ -69,7 +69,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="routes.php" class="active"> 
+                    <a href="routes.php"> 
                         Routes
                     </a>
                 </li>
@@ -79,7 +79,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="users.php">
+                    <a href="users.php" class="active">
                         Users
                     </a>
                 </li>
@@ -100,50 +100,32 @@
             <div class="content">
                 <div class="container-fluid">
                     <div class="row" style="margin: 25px 0;">
-                    <h1 class="text-danger"> Update Route.</h1>
+                        <h1 class="text-danger"> Update User.</h1>
 						<?php
-							$route_id = $_GET['route_id'];
-							$sql = "SELECT * FROM `route_detail` WHERE route_id='$route_id'";
+							$admin_id = $_GET['admin_id'];
+							$sql = "SELECT * FROM `admin` WHERE admin_id='$admin_id'";
 							$result = mysqli_query($con,$sql);
 
 							if(!$result){
 								die("Unable to run the query".mysqli_error($con));
-							}
+                            }
 
 							while($row=mysqli_fetch_object($result)){?>
-								<form action="route_update.php" method="post">
-									<input type="hidden" value="<?php echo $route_id;?>" name="route_id"/>
+								<form action="users_update.php" method="post">
+									<input type="hidden" value="<?php echo $admin_id;?>" name="admin_id"/>
                                     
                                     <div class="input-group">
-                                        <label for="journeyFrom" class="required">Journey From</label>
-                                        <input type="text" name="journeyFrom" placeholder="Journey From" value='<?php echo "$row->departure_station";?>' required="required" />
+                                        <label>User type</label>
+                                        <select name="user_type" id="user_type" required style="width: 300px; padding: 4px;">
+                                            <option value="admin">Admin</option>
+                                            <option value="user">User</option>
+                                        </select>
                                     </div>
 
-                                    <div class="input-group">
-                                        <label for="journeyTo" class="required">Journey To</label>
-                                        <input type="text" name="journeyTo" placeholder="Journey To" value='<?php echo "$row->arrival_station";?>' required="required" />
-                                    </div>
-
-                                    <div class="input-group">
-                                        <label for="viaStation" class="required">Via-Station</label>
-                                        <input type="text" name="viaStation" placeholder="Via-Station" value='<?php echo "$row->via_station";?>' required="required" />
-                                    </div>
-
-                                    <div class="input-group">
-                                        <label for="fare" class="required">Fare</label>
-                                        <input type="text" name="fare" placeholder="Fare" value='<?php echo "$row->rent";?>' required="required" />
-                                    </div>
-
-                                    <div class="input-group">
-                                        <input type="submit" name="update-route" value="Update Route">
-                                        <a href="routes.php" style="margin-left: 10px;">Cancel</a>
-                                    </div>
-
-                                    <br>
-
-									<span class="text-success"><?php if (isset($successmsg)) { echo $successmsg; } ?></span>
-									<span class="text-danger"><?php if (isset($errormsg)) { echo $errormsg; } ?></span>
-
+                                    <div class="input-group" style="display: inline-block;">
+                                        <input type="submit" name="update-users"value="Update User">
+                                        <a href="users.php" style="margin-left: 10px;">Cancel</a>
+                                    </div>    
 								</form>
 							<?php
 							}

@@ -11,26 +11,6 @@
         header( 'Content-Type: text/html; charset=utf-8' );
     }
 
-    $dateOfJourney = $_SESSION['dateOfJourney'];
-    $selected_route_id = $_SESSION['selected_route_id'];
-
-    $query = "SELECT * FROM `book_detail`, `bus_detail` WHERE `journey_date` like '$dateOfJourney' AND `route_id`='$selected_route_id'";
-    $result = mysqli_query($db,$query) or die('Error: '.mysql_error ());
-    $no_of_rows = mysqli_num_rows($result);
-    if($no_of_rows>0){
-        while($row = mysqli_fetch_assoc($result)) {
-            $choice = $row['choice'];
-            echo "Seat Choice " .$choice."<br>";
-            $explode_choice = explode(',', $row['choice']);
-            $ccount = count($explode_choice);
-            echo $ccount." Seat Occupied. <br>";
-
-            $total_seat = $row['total_seat'];
-            echo "total seat: " .$total_seat."<br>";
-        }
-    }
-
-
 ?>
 
 <!DOCTYPE html>
@@ -57,7 +37,10 @@
                 <header>
                     <ul>
                         <li><a href="index.php">Home</a></li>
-                        <li><a href="login.php">Login</a></li>
+                        <li><a href="timetable.php">Time Table</a></li>
+                        <?php  if (!isset($_SESSION['cust_name'])) {?>
+                            <li><a href="login.php">Login</a></li>
+                        <?php }?>
                         <?php  if (isset($_SESSION['cust_name'])) {?>
                             <li> <a href="index.php?logout='1'">Logout</a> </li>
                         <?php }?>
@@ -107,11 +90,23 @@
 
                     <?php
 
-                        $sql = "select * from `time_table`";
+                        $journeyFrom = $_SESSION['journeyFrom'];
+                        $journeyTo = $_SESSION['journeyTo']; 
+                        $dateOfJourney = $_SESSION['dateOfJourney'];
+                        
+                        if (!isset($_SESSION['selected_route_id']))
+                        {
+                            $selected_route_id = "";
+                        }else{
+                            $selected_route_id = $_SESSION['selected_route_id'];
+
+                        }
+
+                        $sql = "SELECT * from `time_table` WHERE departure_station = '$journeyFrom' AND arrival_station = '$journeyTo'";
                         $run = mysqli_query($db,$sql);
 
                         if(!$run)
-                            die("Unable to run query".mysqli_error());
+                            die("Unable to run query".mysqli_error($db));
 
                         $rows = mysqli_num_rows($run);
                         if($rows>0){
@@ -120,17 +115,31 @@
                                 $departure_station = $data['departure_station'];
                                 $arrival_station = $data['arrival_station'];
 
-                                $journeyFrom = $_SESSION['journeyFrom'];
-                                $journeyTo = $_SESSION['journeyTo']; 
-                                $dateOfJourney = $_SESSION['dateOfJourney'];
 
                                 if(($journeyFrom == $departure_station) && ($journeyTo == $arrival_station)){
                                     echo "<td>".$data['departure_station']."</td>";
                                     echo "<td>".$data['arrival_station']."</td>";
                                     echo "<td>".$data['via_station']."</td>";
-                                    echo "<td>".date('h:i A', strtotime($data['departure_time']))."</td>";
-                                    echo "<td>".date('h:i A', strtotime($data['arrival_time']))."</td>";
+
+                                    if(empty($data['departure_time'])){
+                                        $departure_time = "--:-- AM";
+                                    }else{
+                                        $departure_time = date('h:i A', strtotime($data['departure_time']));
+                                    }
+                                    echo "<td>".$departure_time."</td>";
+    
+                                    if(empty($data['arrival_time'])){
+                                        $arrival_time = "--:-- PM";
+                                    }else{
+                                        $arrival_time = date('h:i A', strtotime($data['arrival_time']));
+                                    }
+                                    echo "<td>".$arrival_time."</td>";
+
                                     echo "<td>".$data['rent']."</td>";
+                                    
+                                    // rent Session
+                                    $_SESSION['route_rent'] = $data['rent'];
+
                                         $query2 = "SELECT
                                             `journey_date`,
                                             COUNT(*) AS COUNT
@@ -138,80 +147,44 @@
                                                 book_detail
                                             WHERE
                                                 `journey_date` = '$dateOfJourney' 
-                                            AND `route_id`='$selected_route_id'
+                                            AND 
+                                                `route_id` = '$selected_route_id'
                                             GROUP BY 
                                                 journey_date 
                                             HAVING
-                                                COUNT(*) < 35";
-                                        $result2 = mysqli_query($db,$query2) or die('Error: '.mysql_error ());
-                                        while($row = mysqli_fetch_assoc($result2)) {
-                                            $count = $row['COUNT'];
-                                            if ($count < "32") {
-                                                // echo $row['journey_date'].": <font color= 'red'>".$row['COUNT']."</font><br>";
-                                                $availableNo = 32 - $count;
-                                                echo "<td>".$availableNo." Seat</td>";
-                                            } else {
-                                                echo "<td> Not Available </td>";
+                                                COUNT(*) < 32";
+                                        $result2 = mysqli_query($db,$query2) or die('Error: '.mysqli_error ($db));
+
+                                        $no_rows = mysqli_num_rows($result2);
+                                        echo $no_rows;
+		                                if($no_rows>0){
+                                            while($row = mysqli_fetch_assoc($result2)) {
+                                                $count = $row['COUNT'];
+                                                if ($count < "32") {
+                                                    $availableNo = 32 - $count;
+                                                    echo "<td>".$availableNo." Seat</td>";
+                                                } else {
+                                                    echo "<td> Not Available </td>";
+                                                }
                                             }
+                                        }else{
+                                            echo "<td> 32 </td>";
                                         }
-                                    echo "<td><input type='submit' name='bookNow' value='Book Now'>";
+                                    echo "<td><input type='submit' name='bookNow' value='Book Now'></td></tr>";
                                 }
-                                else{
-                                    echo "</table> No data available in table.";
+                                else if(($journeyFrom != $departure_station) && ($journeyTo != $arrival_station)) {
+                                    echo ("No data available in table.");
                                 }
                             }
                         }
                         else{
-                                echo "No data found <br/>";
+                                echo "<td colspan='5'> No data found </td> <br/>";
                             }
                     ?>
                     </table>
 
                 </div>
             </form>
-
-            <table border="0" cellpadding="0" cellspacing="20" style="margin: 5px 0;">
-
-                <thead style="text-align: left;">
-                    <tr>
-                        <th>From</th>
-                        <th>To</th>
-                        <th>Via Station</th>
-                        <th>Fare</th>
-                        <th>Route Id</th>
-                    </tr>
-                </thead>
-                <?php
-
-                    $route_sql = "select * from `route_detail`";
-                    $route_run = mysqli_query($db,$route_sql);
-
-                    if(!$route_run)
-                        die("Unable to run query".mysqli_error());
-
-                    $no_rows = mysqli_num_rows($route_run);
-                    if($no_rows>0){
-                        while($data = mysqli_fetch_assoc($route_run)){
-
-                            $departure_station = $data['departure_station'];
-                            $arrival_station = $data['arrival_station'];
-
-                            $journeyFrom = $_SESSION['journeyFrom'];
-                            $journeyTo = $_SESSION['journeyTo']; 
-                            $dateOfJourney = $_SESSION['dateOfJourney'];
-
-                            if(($journeyFrom == $departure_station) && ($journeyTo == $arrival_station)){
-                                echo "<td>".$data['departure_station']."</td>";
-                                echo "<td>".$data['arrival_station']."</td>";
-                                echo "<td>".$data['via_station']."</td>";
-                                echo "<td>".$data['rent']."</td>";
-                                echo "<td>".$data['route_id']."</td>";
-                            }
-                        }
-                    }
-                    echo "Session Route Id : ".$_SESSION['selected_route_id'];
-                ?>
-            </table>
 
         </div>
 

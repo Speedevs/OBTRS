@@ -72,6 +72,7 @@ function login(){
         if ($row = mysqli_fetch_array($result)) {
             $_SESSION['usr_id'] = $row['admin_id'];
             $_SESSION['usr_name'] = $row['username'];
+            $_SESSION['user_type'] = $row['user_type'];
             header("Location: redirect.php");
         } else {
             $signinErrormsg = "Incorrect Email or Password!!!";

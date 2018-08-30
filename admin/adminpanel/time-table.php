@@ -114,9 +114,10 @@
 <body>
     <div class="wrapper">
         <div class="sidebar" data-color="red" data-image="../assets/img/sidebar-1.jpg">
-            <div class="logo"> <a href="#" class="simple-text">
+            <div class="logo"> 
+                <a href="index.php" class="simple-text">
                     Admin Panel
-                    </a>
+                </a>
                     <?php
                         if (isset($_SESSION['usr_id'])) { ?>
                             <span data-hover="Welcome">Welcome - &nbsp;<?php echo $_SESSION['usr_name']; ?>
@@ -167,7 +168,13 @@
                                     <th>Departure Time</th>
                                     <th>Arrival Time</th>
                                     <th>Fare</th>
-                                    <th>Action</th>
+                                    <?php 
+                                        if (isset( $_SESSION['user_type'] )) {
+                                            if($_SESSION['user_type'] == 'admin'){
+                                                echo "<th>Action</th>";
+                                            }
+                                        }
+                                    ?>
                                 </tr>
                             </thead>
 
@@ -203,11 +210,16 @@
 
                                 echo "<td>".$data -> rent."</td>";
 
-                                echo "<td><a href = time_table_edit.php?route_id=".$data -> route_id."> Edit </a></td></tr>";
+                                if (isset( $_SESSION['user_type'] )) {
+                                    if($_SESSION['user_type'] == 'admin'){
+                                        echo "<td><a href = time_table_edit.php?route_id=".$data -> route_id."> Edit </a></td>";
+                                    }
+                                }
+                                echo "</tr>";
                             }
                         }
                         else{
-                                echo "No data found <br/>";
+                                echo "<td colspan='5'> No data found </td><br/>";
                             }
                         ?>
                         </table>

@@ -37,7 +37,8 @@
 <body>
     <div class="wrapper">
         <div class="sidebar" data-color="red" data-image="../assets/img/sidebar-1.jpg">
-            <div class="logo"> <a href="#" class="simple-text">
+            <div class="logo"> 
+                <a href="index.php" class="simple-text">
                     Admin Panel
                     </a>
                     <?php
@@ -57,10 +58,54 @@
             <div class="sidebar-background" style="background-image: url(../admin/assets/img/sidebar-1.jpg);"></div>
         </div>
         <div class="main-panel ps-container ps-theme-default ps-active-y">
-            <div class="content">
-                <div class="container-fluid">
-                    <div class="row">
+            <div class="dashboard-content content">
+                <div cl ass="container-fluid">
+                    <div style="margin: 25px 15px;">
+                        <h1 class="text-danger"> Dashboard.</h1>
                     </div>
+                    <a href='route.php' class="row">
+                        <?php
+                            $query = "SELECT COUNT(*) FROM `route_detail` ";
+                            $result = mysqli_query($con, $query);
+                            if($result) {
+                                $count = mysqli_fetch_array($result);
+                                echo "<h1> $count[0] - Route.</h1>";
+                            }
+                        ?>
+                    </a>
+                    <a href='booking.php' class="row">
+                        <?php
+                            $query = "SELECT COUNT(*) FROM `book_detail`  ";
+                            $result = mysqli_query($con, $query);
+                            if($result) {
+                                $count = mysqli_fetch_array($result);
+                                echo "<h1> $count[0] - Booking.</h1>";
+                            }
+                        ?>
+                    </a>
+                </div>
+                <div cl ass="container-fluid">
+                    <a href='customer.php' class="row">
+                        <?php
+                            $query = "SELECT COUNT(*) FROM `customer` ";
+                            $result = mysqli_query($con, $query);
+                            if($result) {
+                                $count = mysqli_fetch_array($result);
+                                echo "<h1> $count[0] Customer.</h1>";
+                            }
+                        ?>
+                    </a>
+                    <a href='users.php' class="row">
+                        <?php
+                            $query = "SELECT COUNT(*) FROM `admin` ";
+                            $result = mysqli_query($con, $query);
+                            if($result) {
+                                $count = mysqli_fetch_array($result);
+                                echo "<h1> $count[0] Admin.</h1>";
+                            }
+                        ?>
+                    </a>
+                    
                 </div>
             </div>
             

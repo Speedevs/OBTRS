@@ -34,6 +34,7 @@
                 <header>
                     <ul>
                         <li><a href="index.php">Home</a></li>
+                        <li><a href="timetable.php">Time Table</a></li>
                         <!-- <li><a href="login.php">Login</a></li> -->
                         <li><a href="register.php">Register</a></li>
                     </ul>
@@ -45,15 +46,17 @@
                 <?php
                     if (!isset($_SESSION['cust_id']))
                     {
-                        echo "<h2>You Must Login To Book Ticket</h2>";
+                        echo "<h2>You Must Login To Book Ticket or </br><a href='timetable.php'>Click Here</a> to view available route.</h2>";
                     }
                 ?>
 
                 <div id="signin">
                     <h1>Sign-In</h1>
                     <form role="form" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" name="loginform" class="signin-form">
-                        <?php include('errors.php'); ?>
-
+                        <span class="text-danger">
+                            <?php include('errors.php'); ?>
+                        </span>
+                        
                         <div class="input-group">
                             <label>Email</label>
                             <input type="email" name="email" >
