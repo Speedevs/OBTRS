@@ -111,7 +111,11 @@
                     </div>
                     <div class="row" style="margin: 25px 0;">
                         <h1 class="text-danger"> Bus Type.</h1>
-						<form action="#" method="post" class="bus_type">
+            <?php
+                if (isset( $_SESSION['user_type'] )) {
+                    if($_SESSION['user_type'] == 'admin'){
+            ?>
+						<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="bus_type">
                             
                             <div class="input-group">
                                 <label for="busNo" class="required">Bus No</label>
@@ -139,6 +143,10 @@
                             <span class="text-danger"><?php if (isset($errormsg)) { echo $errormsg; } ?></span>
 
                         </form>
+            <?php       
+                    }
+                }
+            ?>
 					</div>
                     <div class="row" style="margin: 25px 0;">
                         <table border="0" cellpadding="0" cellspacing="20" style="margin: 5px 0;">
@@ -148,7 +156,13 @@
                                     <th>Bus No.</th>
                                     <th>Bus Type</th>
                                     <th>Total Seat</th>
-                                    <th>Action</th>
+                                    <?php
+                                        if (isset( $_SESSION['user_type'] )) {
+                                            if($_SESSION['user_type'] == 'admin'){
+                                                echo "<th>Action</th>";
+                                            }
+                                        }
+                                    ?>
                                 </tr>
                             </thead>
 
@@ -167,8 +181,14 @@
                                     echo "<td>".$data -> bus_type."</td>";
                                     echo "<td>".$data -> total_seat."</td>";
 
-                                    echo "<td><a href = bus_type_edit.php?bus_no=".$data -> bus_no."> Edit </a> | 
-                                    <a href = bus_type_delete.php?bus_no=".$data -> bus_no."> Delete </a></td></tr>";
+                                    if (isset( $_SESSION['user_type'] )) {
+                                        if($_SESSION['user_type'] == 'admin'){
+                                            echo "<td><a href = bus_type_edit.php?bus_no=".$data -> bus_no."> Edit </a> | 
+                                            <a href = bus_type_delete.php?bus_no=".$data -> bus_no."> Delete </a></td>";
+                                        }
+                                    }
+                                    echo "</tr>";
+                                    
                                 }
                             }
                             else{

@@ -153,9 +153,14 @@
                             ?>
                         </span>
                     </div>
+
                     <div class="row" style="margin: 25px 0;">
-                    <h1 class="text-danger"> Add New Route.</h1>
-						<form action="#" method="post" class="insert_route">
+                        <h1 class="text-danger"> Add New Route.</h1>
+            <?php
+                if (isset( $_SESSION['user_type'] )) {
+                    if($_SESSION['user_type'] == 'admin'){
+            ?>
+						<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="insert_route">
                             <div class="input-group">
                                 <label for="journeyFrom" class="required">Journey From</label>
                                 <input type="text" name="journeyFrom" placeholder="Journey From" required="required"/>
@@ -174,7 +179,7 @@
                             </div>
                             <div class="input-group" style="display: block;">
                                 <input type="submit" name="insert-route" id="insert-route" value="Insert Route">
-                                <a href="#" style="margin-left: 10px;">cancel</a>
+                                <a href="#" style="margin-left: 10px;">Cancel</a>
                             </div>
                                 
                             <br>
@@ -183,7 +188,12 @@
                             <span class="text-danger"><?php if (isset($errormsg)) { echo $errormsg; } ?></span>
 
                         </form>
-					</div>
+            <?php       
+                    }
+                }
+            ?>
+                    </div>
+                    
 					<div class="row" style="margin: 25px 0;">
                         <table border="0" cellpadding="0" cellspacing="20" style="margin: 5px 0;">
 
@@ -195,7 +205,13 @@
                                     <th>To</th>
                                     <th>Via Station</th>
                                     <th>Fare</th>
-                                    <th>Action</th>
+                                    <?php
+                                        if (isset( $_SESSION['user_type'] )) {
+                                            if($_SESSION['user_type'] == 'admin'){
+                                                echo "<th>Action</th>";
+                                            }
+                                        }
+                                    ?>
                                 </tr>
                             </thead>
 
@@ -217,15 +233,20 @@
                                 echo "<td>".$data -> arrival_station."</td>";
                                 echo "<td>".$data -> via_station."</td>";
                                 echo "<td>".$data -> rent."</td>";
-
-                                echo "<td><a href = route_edit.php?route_id=".$data -> route_id."> Edit </a> | 
-                                <a href = route_delete.php?route_id=".$data -> route_id."> Delete </a></td></tr>";
+                                
+                                if (isset( $_SESSION['user_type'] )) {
+                                    if($_SESSION['user_type'] == 'admin'){
+                                        echo "<td><a href = route_edit.php?route_id=".$data -> route_id."> Edit </a> | 
+                                        <a href = route_delete.php?route_id=".$data -> route_id."> Delete </a></td>";
+                                    }
+                                }
+                                echo "</tr>";
                                 
                                 $sn++;
                             }
                         }
                         else{
-                                echo "No data found <br/>";
+                                echo "<td colspan='5'> No data found </td><br/>";
                             }
                         ?>
                         </table>

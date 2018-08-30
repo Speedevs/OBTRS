@@ -115,6 +115,48 @@ form input[type="submit"] {
     cursor: pointer;
 }
 
+.content table {
+    width: 80%;
+}
+
+.main-panel>.content {
+    padding: 25px;
+}
+
+.dashboard-content .row {
+    margin: 25px 15px;
+    width: 250px;
+    display: inline-block;
+    background: #f44336;
+    padding: 20px;
+    color: #FFFFFF;
+    text-align: center;
+    border-radius: 5px;
+    cursor: pointer;
+    transform: translate(0px, 0px) scale(1.0);
+    transition: all ease-in-out 300ms;
+    box-shadow: 0px 17px 10px -10px rgba(0, 0, 0, 0.4);
+}
+
+.dashboard-content .row:hover {
+    opacity: 1;
+    box-shadow: 0px 37px 20px -20px rgba(0, 0, 0, 0.2);
+    -webkit-transform: translate(0px, -10px) scale3d(0.95, 0.95, 0.95);
+    transform: translate(0px, -10px) scale3d(0.95, 0.95, 0.95);
+    ;
+    /* box-shadow: 0 19px 38px rgba(153, 153, 153, 0.3), 0 15px 12px rgba(78, 78, 78, 0.2); */
+}
+
+.dashboard-content .row h1 {
+    transform: translate(0px, -5px) scale(1.0);
+    transition: all ease-in-out 300ms;
+}
+
+.dashboard-content .row:hover h1 {
+    /* color: #999; */
+    /* transform: translate(0px, -10px) scale(1.0); */
+}
+
 span {
     color: #999;
 }
@@ -249,7 +291,7 @@ a:hover,
 .sidebar .nav li>a,
 .off-canvas-sidebar .nav li>a {
     margin: 10px 15px 0;
-    border-radius: 3px;
+    border-radius: 4px;
     color: #3C4858;
 }
 

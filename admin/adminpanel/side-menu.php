@@ -5,11 +5,11 @@
                 Dashboard
             </a>
         </li>
-        <li>
+        <!-- <li>
             <a href="schedule.php">
                 Schedule
             </a>
-        </li>
+        </li> -->
         <li>
             <a href="booking.php">
                 Booking
@@ -30,11 +30,11 @@
                 Bus-type
             </a>
         </li>
-        <li>
+        <!-- <li>
             <a href="setting.php">
                 Settings
             </a>
-        </li>
+        </li> -->
         <li>
             <a href="users.php">
                 Users
